@@ -7,7 +7,6 @@ const app = express();
 const PORT = 4000;
 
 app.use(express.json());
-app.use(express);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -44,9 +43,16 @@ app.post("/products", (req, res) => {
     });
 });
 
-app.put("/products/:id", (req, res) => {
-  console.log("test");
-  res.send("Hello Products");
+app.patch("/products/:id", (req, res) => {
+  connection.promise()
+   .query('UPDATE products SET ? WHERE product_id = ?', [req.body, +req.params.id])
+   .then(([result]) => {
+     res.sendStatus(200);
+   })
+   .catch((err) => {
+     console.error(err);
+     res.sendStatus(500);
+   });
 });
 
 app.listen(PORT, () => {
